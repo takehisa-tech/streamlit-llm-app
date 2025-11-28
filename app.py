@@ -1,7 +1,3 @@
-from dotenv import load_dotenv
-
-load_dotenv()
-
 import streamlit as st
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
@@ -20,16 +16,19 @@ def ask_llm(user_text: str, expert_type: str) -> str:
     else:
         system_message = "あなたは丁寧でフレンドリーなアシスタントです。"
 
-    # プロンプトテンプレート（Lesson8 形式）
+    # LangChainプロンプトテンプレート（LCEL）
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_message),
         ("human", "{input_text}")
     ])
 
-    # OpenAI Chat Model
-    model = ChatOpenAI(model="gpt-4o-mini")  # 任意モデル。Streamlit Cloudでも動作。
+    # OpenAIモデル
+    model = ChatOpenAI(
+        model="gpt-4o-mini",  # 任意のモデル。Streamlit Cloudで動作します
+        temperature=0.5
+    )
 
-    # チェーン生成
+    # チェーン
     chain = prompt | model
 
     # 実行
@@ -46,17 +45,18 @@ st.title("🧠 LangChain × Streamlit Demo App")
 st.write("""
 ### 📘 アプリ概要
 このアプリでは、入力フォームにテキストを入力し、  
-選択した専門家の視点からLLMが回答します。  
-LangChain を用いてプロンプトを構築し、回答内容を表示します。
+選択した専門家の視点からLLMが回答します。
+
+LangChain を使用し、シンプルな LLM チェーンを構築しています。
 
 #### 🔧 操作方法
 1. **専門家の種類** をラジオボタンから選ぶ  
 2. **テキストを入力**  
 3. **「送信」ボタンを押す**  
-4. LLM からの回答が画面下に表示されます
+4. LLM からの回答が表示されます
 """)
 
-# ラジオボタン（専門家選択）
+# 専門家選択
 expert_choice = st.radio(
     "LLMの専門家タイプを選択してください：",
     ("A（AIエンジニア）", "B（ビジネスコンサルタント）")
